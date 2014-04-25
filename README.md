@@ -38,7 +38,7 @@ NOTE: Feel free to contribute new templates to this repo!
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
 
     <!-- Step 1. Add CSS for the mapping components -->
-    <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css">   
+    <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.9/js/esri/css/esri.css">   
     <link rel="stylesheet" type="text/css" href="http://esri.github.io/bootstrap-map-js/src/css/bootstrapmap.css">   
     <style>
       /* Set the responsive map size here */
@@ -67,9 +67,18 @@ NOTE: Feel free to contribute new templates to this repo!
     </div>
 
     <!-- Step 3. Load the responsive map -->
-    <script src="http://js.arcgis.com/3.8compact"></script>
+    <script type="text/javascript">
+        var package_path = "//esri.github.com/bootstrap-map-js/src/js";
+        var dojoConfig = {
+            packages: [{
+                name: "application",
+                location: package_path
+            }]
+        };
+    </script>
+    <script src="http://js.arcgis.com/3.9compact"></script>
     <script>
-      require(["http://esri.github.io/bootstrap-map-js/src/js/bootstrapmap.js", "dojo/domReady!"], 
+      require(["application/bootstrapmap", "dojo/domReady!"], 
         function(BootstrapMap) {
           <!-- Get a reference to the ArcGIS Map class -->
           var map = BootstrapMap.create("mapDiv",{
@@ -110,6 +119,7 @@ Visit the [Getting Started Guide](http://esri.github.io/bootstrap-map-js/demo/ge
 * Responsive Map: You can only have one responsive map per page. You can have as many maps as you want that are fixed in size however.
 * ScrollwheelZoom: To enable scrollwheel zoom, set ```scrollWheelZoom: true``` in the constructor. A scrolling map will "slip" however if the page is larger than the viewport, therefore, this is set to ```false``` by default.
 * IE8 Support: Add the following shims to support IE8.  For more information visit [getbootstrap.com](http://getbootstrap.com/getting-started/#support).
+
     ```
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
