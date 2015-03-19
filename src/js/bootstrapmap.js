@@ -1,6 +1,7 @@
 define([
     "esri/map",
-    "esri/arcgis/utils",
+    //"esri/arcgis/utils",
+    "dojo/Deferred",
     "esri/geometry/Point",
     "dojo/_base/declare",
     "dojo/on",
@@ -12,7 +13,8 @@ define([
     "dojo/NodeList-traverse",
     "dojo/dom-class",
     "dojo/domReady!"],
-    function (Map, EsriUtils, Point, declare, on, touch, dom, lang, style, query, nodecols, domClass) {
+    //function (Map, EsriUtils, Point, declare, on, touch, dom, lang, style, query, nodecols, domClass) {
+    function (Map, Deferred, Point, declare, on, touch, dom, lang, style, query, nodecols, domClass) {
         "use strict";
 
         return {
@@ -72,6 +74,8 @@ define([
                     this._options = lang.mixin(options, {});
                     // Events
                     this._handles = [];
+                    // deffered loading EsriUtils
+                    this._loadingEsriUtils = null;
                 },
                 // Create a new map
                 createMap: function () {
@@ -90,8 +94,14 @@ define([
                     this._mapDiv.__map = this._map;
                     return this._map;
                 },
+                // Load EsriUtils and create the webmap for client
+                createWebMap: function (webMapId) {                    
+                    this._loadingEsriUtils = new Deferred();
+                    require(["esri/arcgis/utils"], lang.hitch(this, '_createWebMap', webMapId));
+                    return this._loadingEsriUtils.promise;                    
+                },
                 // Create the webmap for client
-                createWebMap: function (webMapId) {
+                _createWebMap: function (webMapId, EsriUtils) {
                     var deferred,
                         myselfAsAResizer,
                         getDeferred;
@@ -119,10 +129,12 @@ define([
                         this._bindEvents();
                         this._mapDiv.__map = this._map;
                         this._smartResizer = myselfAsAResizer;
+                        this._loadingEsriUtils.resolve(response);
                     };
-                    this._mapDeferred.then(lang.hitch(this, getDeferred));
-                    return deferred;
+                    this._mapDeferred.then(lang.hitch(this, getDeferred));                    
+                    //return deferred;
                 },
+
                 _setPopup: function () {
                     domClass.add(this._map.infoWindow.domNode, "light");
                 },
